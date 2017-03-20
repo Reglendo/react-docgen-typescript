@@ -33,6 +33,7 @@ export interface MemberDoc {
 export interface FileDoc {
     classes: ClassDoc[];
     interfaces: InterfaceDoc[];
+    defaultProps: String[];
 }
 /** Generate documention for all classes in a set of .ts files */
 export function getDocumentation(fileName: string, options: ts.CompilerOptions = defaultOptions): FileDoc {
@@ -42,8 +43,10 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
         
     const classes: ClassDoc[] = [];
     const interfaces: InterfaceDoc[] = [];
+    const defaultProps: String[] = [];
     
     const sourceFile = program.getSourceFile(fileName);
+    const sourceText = sourceFile.text;
     ts.forEachChild(sourceFile, visit);
     
     /** visit nodes finding exported classes */    
@@ -64,6 +67,36 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
             const list = getFlatChildren(typeArguments)
                 .filter(i => i.kind === ts.SyntaxKind.Identifier)
                 .map((i: ts.Identifier) => i.text);
+
+            
+            symbol.exports.defaultProps.declarations.map(function(obj) {
+                obj.initializer.properties.map(function(o) {
+                    var defaultValue = null;
+                    if(o.initializer.text !== undefined) {
+                        defaultValue = o.initializer.text.trim();
+                    }
+                    else if(o.initializer.body !== undefined) {
+                        defaultValue = sourceText.substring(o.initializer.body.statements.pos,o.initializer.body.statements.end).trim();
+                    }
+                    else if(o.initializer !== undefined) {
+                        defaultValue = sourceText.substring(o.initializer.pos, o.initializer.end).trim();
+                    }
+
+                    if(defaultValue !== null && defaultValue != 'undefined') {
+                        defaultProps[o.name.text] = defaultValue;
+                    }
+                    
+                })
+
+            })
+            
+            // check React namespace
+            if(list.length > 0) {
+                if(list[0] === 'React') {
+                    list.shift();
+                    list[0] = 'React.' + list[0];
+                }
+            }
 
             classes.push({
                 name: symbol.name,
@@ -116,6 +149,7 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
     return {
         classes,
         interfaces,
+        defaultProps
     }
 }
 

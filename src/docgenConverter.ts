@@ -1,7 +1,7 @@
 import { FileDoc } from './parser';
 
 export function convertToDocgen(doc: FileDoc) {
-  const reactClasses = doc.classes.filter(i => i.extends === 'Component');
+  const reactClasses = doc.classes.filter(i => i.extends === 'Component' || i.extends === 'React.Component');
 
   if (reactClasses.length === 0) {
     return null;
@@ -13,13 +13,15 @@ export function convertToDocgen(doc: FileDoc) {
   }
   const props = reactInterfaces[0];
 
+  const defaultProps = doc.defaultProps;
+
   return {
     description: comp.comment,
     props: props.members.reduce((acc, i) => {
       const item: PropItem = {
         description: i.comment,
         type: { name: i.type },
-        defaultValue: null,
+        defaultValue: printDefaultValue(defaultProps, i.name, i.type),
         required: i.isRequired
       };
       if (i.values) {
@@ -30,6 +32,32 @@ export function convertToDocgen(doc: FileDoc) {
       return acc;
     }, {})
   }
+}
+
+export function printDefaultValue(defaultProps: array, name: string, type: string) {
+    let defaultValue = null;
+
+    let value = defaultProps[name];
+
+    if(defaultProps[name] !== undefined) {
+        if(type === 'number') {
+            defaultValue =  defaultProps[name];
+        } else 
+        if(type === 'string') {
+            defaultValue =  "“" + defaultProps[name] + "”";
+        } else 
+        if(type === 'boolean') {
+            defaultValue = defaultProps[name];
+        } else {
+            defaultValue = defaultProps[name];
+        }
+    }
+
+    if(defaultValue !== null) {
+        return { value: defaultValue, computed: false };
+    } else {
+        return null;
+    }
 }
 
 export interface PropItemType {
