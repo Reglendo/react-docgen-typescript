@@ -69,7 +69,7 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                 .map((i: ts.Identifier) => i.text);
 
             
-            symbol.exports.defaultProps.declarations.map(function(obj) {
+            symbol.exports.get('defaultProps').declarations.map(function(obj) {
                 obj.initializer.properties.map(function(o) {
                     var defaultValue = null;
                     if(o.initializer.text !== undefined) {
