@@ -6,6 +6,7 @@
   "typings": "lib/index.d.ts",
   "scripts": {
     "prepublish": "tsc -d",
+    "postinstall": "tsc -d",
     "test": "tsc && mocha ./lib/**/__tests__/**.js",
     "example": "tsc && styleguidist server --config ./examples/react-styleguidist-example/styleguide.config.js"
   },
