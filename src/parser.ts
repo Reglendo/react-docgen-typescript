@@ -69,27 +69,28 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                 .map((i: ts.Identifier) => i.text);
 
             
-            symbol.exports.get('defaultProps').declarations.map(function(obj) {
-                obj.initializer.properties.map(function(o) {
-                    var defaultValue = null;
-                    if(o.initializer.text !== undefined) {
-                        defaultValue = o.initializer.text.trim();
-                    }
-                    else if(o.initializer.body !== undefined) {
-                        defaultValue = sourceText.substring(o.initializer.body.statements.pos,o.initializer.body.statements.end).trim();
-                    }
-                    else if(o.initializer !== undefined) {
-                        defaultValue = sourceText.substring(o.initializer.pos, o.initializer.end).trim();
-                    }
+            if(symbol.exports.get('defaultProps')) {
+                symbol.exports.get('defaultProps').declarations.map(function(obj) {
+                    obj.initializer.properties.map(function(o) {
+                        var defaultValue = null;
+                        if(o.initializer.text !== undefined) {
+                            defaultValue = o.initializer.text.trim();
+                        }
+                        else if(o.initializer.body !== undefined) {
+                            defaultValue = sourceText.substring(o.initializer.body.statements.pos,o.initializer.body.statements.end).trim();
+                        }
+                        else if(o.initializer !== undefined) {
+                            defaultValue = sourceText.substring(o.initializer.pos, o.initializer.end).trim();
+                        }
 
-                    if(defaultValue !== null && defaultValue != 'undefined') {
-                        defaultProps[o.name.text] = defaultValue;
-                    }
-                    
+                        if(defaultValue !== null && defaultValue != 'undefined') {
+                            defaultProps[o.name.text] = defaultValue;
+                        }
+                        
+                    })
+
                 })
-
-            })
-            
+            }
             // check React namespace
             if(list.length > 0) {
                 if(list[0] === 'React') {
@@ -117,6 +118,11 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                     const symbol = checker.getSymbolAtLocation(i.valueDeclaration.name);
                     const prop = i.valueDeclaration as ts.PropertySignature;
                     const typeInfo = getType(prop);
+                    
+                    if(typeInfo.values && typeInfo.values[0].indexOf('Array') !== -1) {
+                        typeInfo.type = 'array';
+                    }
+                    
                     return {
                         name: i.getName(),                                        
                         text: i.valueDeclaration.getText(),

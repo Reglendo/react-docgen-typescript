@@ -34,7 +34,7 @@ export function convertToDocgen(doc: FileDoc) {
   }
 }
 
-export function printDefaultValue(defaultProps: array, name: string, type: string) {
+export function printDefaultValue(defaultProps: Array<String>, name: string, type: string) {
     let defaultValue = null;
 
     let value = defaultProps[name];
