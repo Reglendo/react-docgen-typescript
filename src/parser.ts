@@ -52,9 +52,9 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
     /** visit nodes finding exported classes */
     function visit(node: ts.Node) {
         // Only consider exported nodes
-        if (!isNodeExported(node)) {
-            return;
-        }
+        // if (!isNodeExported(node)) {
+        //     return;
+        // }
 
         if (node.kind === ts.SyntaxKind.VariableStatement) {
             const classNode: any = (node as ts.VariableStatement).declarationList.declarations[0];
@@ -68,6 +68,8 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
             };
             classes.push(classObj);
         }
+
+
         if (node.kind === ts.SyntaxKind.ClassDeclaration) {
             const classNode = node as ts.ClassDeclaration;
             const symbol = checker.getSymbolAtLocation(classNode.name);
@@ -81,29 +83,28 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                 .map((i: ts.Identifier) => i.text);
 
 
-            // if(symbol.exports.get('defaultProps')) {
-            //     symbol.exports.get('defaultProps').declarations.map(function(obj) {
-            //         
-            //         obj.initializer.properties.map(function(o) {
-            //             var defaultValue = null;
-            //             if(o.initializer.text !== undefined) {
-            //                 defaultValue = o.initializer.text.trim();
-            //             }
-            //             else if(o.initializer.body !== undefined) {
-            //                 defaultValue = sourceText.substring(o.initializer.body.statements.pos,o.initializer.body.statements.end).trim();
-            //             }
-            //             else if(o.initializer !== undefined) {
-            //                 defaultValue = sourceText.substring(o.initializer.pos, o.initializer.end).trim();
-            //             }
-            // 
-            //             if(defaultValue !== null && defaultValue != 'undefined') {
-            //                 defaultProps[o.name.text] = defaultValue;
-            //             }
-            //             
-            //         })
-            // 
-            //     })
-            // }
+            symbol.exports.get('defaultProps').declarations.map(function(obj) {
+                obj.initializer.properties.map(function(o) {
+                    var defaultValue = null;
+                    if(o.initializer.text !== undefined) {
+                        defaultValue = o.initializer.text.trim();
+                    }
+                    else if(o.initializer.body !== undefined) {
+                        defaultValue = sourceText.substring(o.initializer.body.statements.pos,o.initializer.body.statements.end).trim();
+                    }
+                    else if(o.initializer !== undefined) {
+                        defaultValue = sourceText.substring(o.initializer.pos, o.initializer.end).trim();
+                    }
+        
+                    if(defaultValue !== null && defaultValue != 'undefined') {
+                        defaultProps[o.name.text] = defaultValue;
+                    }
+                    
+                })
+        
+            })
+            
+            const extend = list.length > 0 && list.indexOf('Component') > -1 ? 'Component' : null
 
             // check React namespace
             if(list.length > 0 && list[0] === 'React') {
@@ -114,7 +115,7 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
             classes.push({
                 name: symbol.name,
                 comment: ts.displayPartsToString(symbol.getDocumentationComment()),
-                extends: list.length > 0 && list.indexOf('Component') > -1 ? 'Component' : null,
+                extends: extend,
                 propInterface: list.length > 1 ? list[1] : null,
             });
         }

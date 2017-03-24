@@ -4,12 +4,12 @@ export function convertToDocgen(doc: FileDoc) {
     const reactClasses = doc.classes.filter(i => i.extends === 'Component' || i.extends === 'StatelessComponent' || i.extends === 'React.Component');
 
     if (reactClasses.length === 0) {
-        return null;
+        return {};
     }
     const comp = reactClasses[0];
     const reactInterfaces = doc.interfaces.filter(i => i.name === comp.propInterface);
     if (reactInterfaces.length === 0) {
-        return null;
+        return {};
     }
     const props = reactInterfaces[0];
     const defaultProps = doc.defaultProps;
