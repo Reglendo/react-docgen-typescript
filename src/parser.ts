@@ -83,9 +83,8 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                 .map((i: ts.Identifier) => i.text);
 
 
-            symbol.exports.get('defaultProps').declarations.map(function(obj) {
-                var initializer = obj['initializer']
-                initializer.properties.map(function(o) {
+            symbol.exports.get('defaultProps').declarations.map(function(obj: any) {
+                obj.initializer.properties.map(function(o) {
                     var defaultValue = null;
                     if(o.initializer.text !== undefined) {
                         defaultValue = o.initializer.text.trim();
