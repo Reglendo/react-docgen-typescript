@@ -68,6 +68,7 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                 propInterface: intf,
             };
             classes.push(classObj);
+        }
 
         if (node.kind === ts.SyntaxKind.ClassDeclaration) {
             const classNode = node as ts.ClassDeclaration;
