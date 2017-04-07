@@ -1,5 +1,9 @@
 # react-docgen-typescript
 
+<img src="https://travis-ci.org/pvasek/react-docgen-typescript.svg?branch=master"/>
+
+<img src="https://nodei.co/npm/react-docgen-typescript.png?downloadRank=true&downloads=true"/>
+
 A simple parser for react properties defined in typescript instead of propTypes. 
 
 It can be used with [react-styleguidist](https://github.com/sapegin/react-styleguidist).
@@ -92,6 +96,8 @@ Will generate the following stylesheet:
 ## Thanks to contributors
 
 @JocD Jacques Dukes - complete support for functional components and much more
+
+@sapegin Artem Sapegin - fix for compatibility with react-styleguidist v5
 
 ## Thanks to others
 The integration with reac-styleguidist wouldn't be possible without [Vyacheslav Slinko](https://github.com/vslinko) pull request [#118](https://github.com/sapegin/react-styleguidist/pull/118) react-styleguidist.
