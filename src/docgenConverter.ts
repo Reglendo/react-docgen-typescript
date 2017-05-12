@@ -19,9 +19,11 @@ export function convertToDocgen(doc: FileDoc): StyleguidistComponent {
     const comp = reactClasses[0];
     const reactInterfaces = doc.interfaces.filter(i => i.name === comp.propInterface);
 
+    const defaultProps = doc.defaultProps;
+
     let props: any = {};
     if (reactInterfaces.length !== 0) {
-        props = getProps(reactInterfaces[0]);
+        props = getProps(reactInterfaces[0], defaultProps);
     } else {
         console.warn('REACT-DOCGEN-TYPESCRIPT It seems that your props type is not exported. Add \'export\' keyword to your props definition.');
     }
@@ -35,7 +37,6 @@ export function convertToDocgen(doc: FileDoc): StyleguidistComponent {
 
 export function printDefaultValue(defaultProps: Array<String>, name: string, type: string) {
     let defaultValue = null;
-
     let value = defaultProps[name];
 
     if(defaultProps[name] !== undefined) {
@@ -80,12 +81,12 @@ export interface Docgen {
     props: PropsObject;
 }
 
-function getProps(props: InterfaceDoc): StyleguidistProps {
+function getProps(props: InterfaceDoc, defaultProps : any): StyleguidistProps {
     return props.members.reduce((acc, i) => {
         const item: PropItem = {
             description: i.comment,
             type: {name: i.type},
-            defaultValue: null,
+            defaultValue: printDefaultValue(defaultProps, i.name, i.type),
             required: i.isRequired
         };
         if (i.values) {
