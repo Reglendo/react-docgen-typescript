@@ -81,27 +81,31 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                 .filter(i => i.kind === ts.SyntaxKind.Identifier)
                 .map((i: ts.Identifier) => i.text);
 
+            const symbols = symbol.exports.get('defaultProps')
 
-            symbol.exports.get('defaultProps').declarations.map(function(obj: any) {
-                obj.initializer.properties.map(function(o) {
-                    var defaultValue = null;
-                    if(o.initializer.text !== undefined) {
-                        defaultValue = o.initializer.text.trim();
-                    }
-                    else if(o.initializer.body !== undefined) {
-                        defaultValue = sourceText.substring(o.initializer.body.statements.pos,o.initializer.body.statements.end).trim();
-                    }
-                    else if(o.initializer !== undefined) {
-                        defaultValue = sourceText.substring(o.initializer.pos, o.initializer.end).trim();
-                    }
+            if(symbols) {
 
-                    if(defaultValue !== null && defaultValue != 'undefined') {
-                        defaultProps[o.name.text] = defaultValue;
-                    }
+                symbols.declarations.map(function(obj: any) {
+                    obj.initializer.properties.map(function(o) {
+                        var defaultValue = null;
+                        if(o.initializer.text !== undefined) {
+                            defaultValue = o.initializer.text.trim();
+                        }
+                        else if(o.initializer.body !== undefined) {
+                            defaultValue = sourceText.substring(o.initializer.body.statements.pos,o.initializer.body.statements.end).trim();
+                        }
+                        else if(o.initializer !== undefined) {
+                            defaultValue = sourceText.substring(o.initializer.pos, o.initializer.end).trim();
+                        }
+
+                        if(defaultValue !== null && defaultValue != 'undefined') {
+                            defaultProps[o.name.text] = defaultValue;
+                        }
+
+                    })
 
                 })
-
-            })
+            }
 
             const extend = list.length > 0 && list.indexOf('Component') > -1 ? 'Component' : null
 
