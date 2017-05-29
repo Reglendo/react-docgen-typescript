@@ -114,12 +114,17 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                 list.shift();
                 list[0] = 'React.' + list[0];
             }
+            // check MUK namespace
+            if(list.length > 0 && list[0] === 'MUK') {
+                list.shift();
+                list[0] = 'MUK.' + list[0];
+            }
 
             classes.push({
                 name: symbol.name,
                 comment: ts.displayPartsToString(symbol.getDocumentationComment()),
-                extends: extend,
-                propInterface: list.length > 1 ? list[1] : null,
+                extends: 'Component',
+                propInterface: 'Props',
             });
         }
 
@@ -199,7 +204,7 @@ function getType(prop: ts.PropertySignature): {type: string, values?: string[]} 
         type: prop.type.getText(),
     }
 }
-// /** Serialize a symbol into a json object */    
+// /** Serialize a symbol into a json object */
 //     function serializeSymbol(symbol: ts.Symbol): DocEntry {
 //         return {
 //             name: symbol.getName(),
@@ -227,4 +232,3 @@ function getType(prop: ts.PropertySignature): {type: string, values?: string[]} 
 //             documentation: ts.displayPartsToString(signature.getDocumentationComment())
 //         };
 //     }
-    
