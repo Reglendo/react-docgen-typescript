@@ -88,10 +88,10 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                 symbols.declarations.map(function(obj: any) {
                     obj.initializer.properties.map(function(o) {
                         var defaultValue = null;
-                        if(o.initializer.text !== undefined) {
+                        if(o.initializer && o.initializer.text !== undefined) {
                             defaultValue = o.initializer.text.trim();
                         }
-                        else if(o.initializer.body !== undefined) {
+                        else if(o.initializer && o.initializer.body !== undefined) {
                             defaultValue = sourceText.substring(o.initializer.body.statements.pos,o.initializer.body.statements.end).trim();
                         }
                         else if(o.initializer !== undefined) {
