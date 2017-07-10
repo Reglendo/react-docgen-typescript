@@ -59,6 +59,9 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
         if (node.kind === ts.SyntaxKind.VariableStatement) {
             const classNode: any = (node as ts.VariableStatement).declarationList.declarations[0];
             const symbol = classNode.symbol;
+            if(!(classNode.initializer && classNode.initializer.parameters && classNode.initializer.parameters[0].type)) {
+                return
+            }
             const intf = classNode.initializer.parameters[0].type.typeName.getText();
             const classObj = {
                 name: symbol.name,
