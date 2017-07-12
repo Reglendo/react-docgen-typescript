@@ -144,15 +144,13 @@ export function getDocumentation(fileName: string, options: ts.CompilerOptions =
                         return s.parent && s.parent.name && symbol.name === s.parent.name;
                     })
                     .map(i => {
-                        if(!i.valueDeclaration) {
-                            return
-                        }
-                        const symbol = checker.getSymbolAtLocation(i.valueDeclaration.name);
-                        const prop = i.valueDeclaration as ts.PropertySignature;
+                        const declaration: any = i.valueDeclaration
+                        const symbol = checker.getSymbolAtLocation(declaration.name);
+                        const prop = declaration as ts.PropertySignature;
                         const typeInfo = getType(prop);
                         return {
                             name: i.getName(),
-                            text: i.valueDeclaration.getText(),
+                            text: declaration.getText(),
                             type: typeInfo.type,
                             values: typeInfo.values,
                             isRequired: !prop.questionToken,
