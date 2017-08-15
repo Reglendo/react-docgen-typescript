@@ -1,7 +1,7 @@
 {
-  "name": "react-docgen-typescript",
-  "version": "0.0.6",
-  "description": "",
+  "name": "@reglendo/react-docgen-typescript",
+  "version": "1.0.0",
+  "description": "Fork of react-docgen-typescript with some special fixes for use in MUK",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
